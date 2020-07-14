@@ -1,0 +1,32 @@
+{
+  "name": "Meet Attendance",
+  "version": "1.0",
+  "description": "Google Meet Atendance Checker",
+  "permissions": ["declarativeContent"],
+  "background": {
+    "scripts": ["js/background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+      {
+          "matches": ["*://meet.google.com/*"],
+          "js": ["js/domChanges.js"]
+      }
+  ],
+  "page_action": {
+    "default_popup": "html/popup.html",
+    "default_icon": {
+      "16": "images/icon_16.png",
+      "32": "images/icon_32.png",
+      "48": "images/icon_48.png",
+      "128": "images/icon_128.png"
+    }
+  },
+  "icons": {
+    "16": "images/icon_16.png",
+    "32": "images/icon_32.png",
+    "48": "images/icon_48.png",
+    "128": "images/icon_128.png"
+  },
+  "manifest_version": 2
+}
