@@ -1,3 +1,23 @@
+function generateCsvFile(attendanceList) {
+  let csvText = "";
+  attendanceList.array.forEach((io, person) => {
+    csvText += `${person};${io}\n`;
+  });
+}
+
+function downloadAttendance(filename = "attendance.csv", text) {
+  var element = document.createElement("a");
+  element.setAttribute(
+    "href",
+    "data:text/csv;charset=utf-8," + encodeURIComponent(text)
+  );
+  element.setAttribute("download", filename);
+  element.style.display = "none";
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}
+
 chrome.runtime.onInstalled.addListener(function (details) {
   var rules = [
     {
@@ -16,6 +36,6 @@ chrome.runtime.onInstalled.addListener(function (details) {
   });
 });
 
-chrome.runtime.onMessage.addListener(function(message) {
+chrome.runtime.onMessage.addListener(function (message) {
   console.log(`This is the message: ${message}`);
-}) 
+});

@@ -2,7 +2,7 @@
   "name": "Meet Attendance",
   "version": "1.0",
   "description": "Google Meet Atendance Checker",
-  "permissions": ["declarativeContent"],
+  "permissions": ["storage", "declarativeContent"],
   "background": {
     "scripts": ["js/background.js"],
     "persistent": false
@@ -10,7 +10,7 @@
   "content_scripts": [
       {
           "matches": ["*://meet.google.com/*"],
-          "js": ["js/domChanges.js"]
+          "js": ["js/attendanceIO.js"]
       }
   ],
   "page_action": {
