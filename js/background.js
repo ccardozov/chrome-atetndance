@@ -1,21 +1,32 @@
-function generateCsvFile(attendanceList) {
-  let csvText = "";
-  attendanceList.array.forEach((io, person) => {
-    csvText += `${person};${io}\n`;
-  });
-}
-
-function downloadAttendance(filename = "attendance.csv", text) {
+function downloadAttendance(text, filename = "attendance") {
   var element = document.createElement("a");
   element.setAttribute(
     "href",
     "data:text/csv;charset=utf-8," + encodeURIComponent(text)
   );
-  element.setAttribute("download", filename);
+  element.setAttribute("download", `${filename}.csv`);
   element.style.display = "none";
   document.body.appendChild(element);
   element.click();
   document.body.removeChild(element);
+}
+
+function generateCsvFileAndDownload() {
+  chrome.storage.local.get("meeting", function (result) {
+    let meeting = result.meeting;
+    let csvText = `${meeting.name};\n${meeting.time}\n`;
+    for (const [person, attendance] of Object.entries(meeting.attendance)) {
+      csvText += `${person};`;
+      let len = Math.min(attendance.in.length, attendance.out.length);
+      for (let i = 0; i < len; i++) {
+        let inTime = new Date(attendance.in[i]);
+        let outTime = new Date(attendance.out[i]);
+        csvText += `IN: ${inTime};OUT: ${outTime};`;
+      }
+      csvText += "\n";
+    }
+    downloadAttendance(csvText, meeting.name);
+  });
 }
 
 chrome.runtime.onInstalled.addListener(function (details) {
@@ -36,6 +47,20 @@ chrome.runtime.onInstalled.addListener(function (details) {
   });
 });
 
+///Check for messages sent from content scripts
+const START_MEETING = "START_MEETING";
+const END_MEETING = "END_MEETING";
 chrome.runtime.onMessage.addListener(function (message) {
-  console.log(`This is the message: ${message}`);
+  console.log(`This is the message:`, message);
+  switch (message) {
+    case START_MEETING:
+      console.log("MEETING STARTED");
+      break;
+    case END_MEETING:
+      console.log("MEETING ENDED");
+      generateCsvFileAndDownload();
+      break;
+    default:
+      break;
+  }
 });
