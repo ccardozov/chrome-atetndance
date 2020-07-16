@@ -1,3 +1,12 @@
+const actions = {
+  START_MEETING: "START_MEETING",
+  END_MEETING: "END_MEETING",
+  PERSON_ENTERED: "PERSON_ENTERED",
+  PERSON_LEFT: "PERSON_LEFT"
+};
+
+
+// *************** HELPER FUNCTIONS **************************
 function downloadAttendance(text, filename = "attendance") {
   var element = document.createElement("a");
   element.setAttribute(
@@ -24,7 +33,7 @@ function generateCsvFileAndDownload() {
       for (let i = 0; i < len; i++) {
         let inTime = new Date(attendance.in[i]);
         let outTime = new Date(attendance.out[i]);
-        csvText += `IN: ${inTime};OUT: ${outTime};`;
+        csvText += `IN:${inTime};OUT:${outTime};`;
       }
       csvText += "\n";
     }
@@ -32,6 +41,29 @@ function generateCsvFileAndDownload() {
   });
 }
 
+function addAttendanceRecord(type, person) {
+  chrome.storage.local.get(["meeting"], (result) => {
+    let newAttendance = result.meeting.attendance;
+    const timestamp = new Date().toGMTString();
+    if (newAttendance.hasOwnProperty(person)) {
+      if (newAttendance[person].hasOwnProperty(type)) {
+        newAttendance[person][type].push(timestamp);
+      } else {
+        newAttendance[person][type] = [timestamp];
+      }
+    } else {
+      newAttendance[person] = { [type]: [timestamp] };
+    }
+
+    Object.assign(result.meeting.attendance, newAttendance);
+    chrome.storage.local.set({ meeting: result.meeting });
+  });
+};
+
+
+
+
+// ************ LISTENERS *******************
 chrome.runtime.onInstalled.addListener(function (details) {
   var rules = [
     {
@@ -54,12 +86,25 @@ chrome.runtime.onInstalled.addListener(function (details) {
 const START_MEETING = "START_MEETING";
 const END_MEETING = "END_MEETING";
 chrome.runtime.onMessage.addListener(function (message) {
-  switch (message) {
-    case START_MEETING:
+  switch (message.action) {
+    case actions.START_MEETING:
       chrome.storage.local.clear();
+      chrome.storage.local.set({
+        meeting: {
+          name: message.data,
+          time: new Date().toLocaleString(),
+          attendance: {},
+        },
+      });
       break;
-    case END_MEETING:
+    case actions.END_MEETING:
       generateCsvFileAndDownload();
+      break;
+    case actions.PERSON_ENTERED:
+      addAttendanceRecord("in", message.data);
+      break;
+    case actions.PERSON_LEFT:
+      addAttendanceRecord("out", message.data);
       break;
     default:
       break;
