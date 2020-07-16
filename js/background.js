@@ -54,13 +54,11 @@ chrome.runtime.onInstalled.addListener(function (details) {
 const START_MEETING = "START_MEETING";
 const END_MEETING = "END_MEETING";
 chrome.runtime.onMessage.addListener(function (message) {
-  console.log(`This is the message:`, message);
   switch (message) {
     case START_MEETING:
-      console.log("MEETING STARTED");
+      chrome.storage.local.clear();
       break;
     case END_MEETING:
-      console.log("MEETING ENDED");
       generateCsvFileAndDownload();
       break;
     default:

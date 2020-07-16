@@ -24,11 +24,7 @@ const addAttendanceRecord = (type, person) => {
     }
 
     Object.assign(result.meeting.attendance, newAttendance);
-    chrome.storage.local.set({ meeting: result.meeting }, () => {
-      chrome.storage.local.get("meeting", (result) => {
-        console.log(result.meeting);
-      });
-    });
+    chrome.storage.local.set({ meeting: result.meeting });
   });
 };
 
@@ -97,28 +93,26 @@ const listenToJoinButtons = () => {
 };
 
 const clearMeetingStorage = () => {
-  chrome.storage.local.clear(() =>
-    console.log("<<< Storage.local CLEARED >>>")
-  );
+  chrome.storage.local.clear();
 };
-
 
 checkStartEndMeeting = () => {
   const eventTypes = ["mousedown", "touchstart"];
   eventTypes.forEach((event) => {
     document.body.addEventListener(`${event}`, (e) => {
-
       switch (e.target.className) {
         case START_MEETING_CLASSNAME:
         case START_WRAPPER_CLASSNAME:
           chrome.runtime.sendMessage(START_MEETING);
           break;
         case END_MEETING_CLASSNAME:
-          if(e.target.parentElement.getAttribute('aria-label') === "Leave call"){
+          if (
+            e.target.parentElement.getAttribute("aria-label") === "Leave call"
+          ) {
             chrome.runtime.sendMessage(END_MEETING);
           }
           break;
-          default:
+        default:
           break;
       }
     });
