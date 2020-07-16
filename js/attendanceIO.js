@@ -88,7 +88,7 @@ const listenToJoinButtons = () => {
       chrome.storage.local.set({
         meeting: {
           name: meetingName,
-          time: new Date().toGMTString(),
+          time: new Date().toLocaleString(),
           attendance: {},
         },
       });
@@ -107,15 +107,18 @@ checkStartEndMeeting = () => {
   const eventTypes = ["mousedown", "touchstart"];
   eventTypes.forEach((event) => {
     document.body.addEventListener(`${event}`, (e) => {
+
       switch (e.target.className) {
         case START_MEETING_CLASSNAME:
         case START_WRAPPER_CLASSNAME:
           chrome.runtime.sendMessage(START_MEETING);
           break;
         case END_MEETING_CLASSNAME:
-          chrome.runtime.sendMessage(END_MEETING);
+          if(e.target.parentElement.getAttribute('aria-label') === "Leave call"){
+            chrome.runtime.sendMessage(END_MEETING);
+          }
           break;
-        default:
+          default:
           break;
       }
     });

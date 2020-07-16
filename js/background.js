@@ -4,7 +4,10 @@ function downloadAttendance(text, filename = "attendance") {
     "href",
     "data:text/csv;charset=utf-8," + encodeURIComponent(text)
   );
-  element.setAttribute("download", `${filename}.csv`);
+  const csvFilename = `${filename}_${new Date()
+    .toLocaleDateString()
+    .replace(/\//g, "-")}.csv`;
+  element.setAttribute("download", csvFilename);
   element.style.display = "none";
   document.body.appendChild(element);
   element.click();
