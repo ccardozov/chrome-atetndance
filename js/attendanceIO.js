@@ -1,14 +1,14 @@
 const INPUT_NAME_PARENT_NODE = "div.qIHHZb";
 const END_MEETING_CLASSNAME = "I5fjHe wb61gb";
-const START_MEETING_CLASSNAME = "NPEfkd RveJvd snByac";
 const START_WRAPPER_CLASSNAME = "l4V7wb Fxmcue";
+const START_MEETING_CLASSNAME = "NPEfkd RveJvd snByac";
 
 // MESSAGE TYPES
 const actions = {
   START_MEETING: "START_MEETING",
   END_MEETING: "END_MEETING",
   PERSON_ENTERED: "PERSON_ENTERED",
-  PERSON_LEFT: "PERSON_LEFT"
+  PERSON_LEFT: "PERSON_LEFT",
 };
 
 // Callback function to execute when mutations are observed
@@ -21,11 +21,17 @@ const callback = (mutationsList, observer) => {
         if (innerText.includes(" joined")) {
           // Someone has joined the conversation
           innerText = innerText.replace(" joined", "");
-          chrome.runtime.sendMessage({action: actions.PERSON_ENTERED, data: innerText});
+          chrome.runtime.sendMessage({
+            action: actions.PERSON_ENTERED,
+            data: innerText,
+          });
         } else if (innerText.includes(" has left the meeting")) {
           // Someone has left the conversation
           innerText = innerText.replace(" has left the meeting", "");
-          chrome.runtime.sendMessage({action: actions.PERSON_LEFT, data: innerText});
+          chrome.runtime.sendMessage({
+            action: actions.PERSON_LEFT,
+            data: innerText,
+          });
         }
       }
     }
@@ -59,7 +65,6 @@ const addInputMeetingName = () => {
   parent.appendChild(node);
 };
 
-
 checkStartEndMeeting = () => {
   const eventTypes = ["mousedown", "touchstart"];
   eventTypes.forEach((event) => {
@@ -67,17 +72,20 @@ checkStartEndMeeting = () => {
       switch (e.target.className) {
         case START_MEETING_CLASSNAME:
         case START_WRAPPER_CLASSNAME:
-          const meetingName = document.getElementById("meeting-name-id").value;
-          chrome.runtime.sendMessage({
-            action: actions.START_MEETING,
-            data: meetingName,
-          });
+          if (e.target.innerText === "Start a meeting") {
+            const meetingName = document.getElementById("meeting-name-id")
+              .value;
+            chrome.runtime.sendMessage({
+              action: actions.START_MEETING,
+              data: meetingName,
+            });
+          }
           break;
         case END_MEETING_CLASSNAME:
           if (
             e.target.parentElement.getAttribute("aria-label") === "Leave call"
           ) {
-            chrome.runtime.sendMessage({action: actions.END_MEETING});
+            chrome.runtime.sendMessage({ action: actions.END_MEETING });
           }
           break;
         default:
