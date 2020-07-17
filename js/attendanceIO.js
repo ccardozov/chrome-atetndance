@@ -72,6 +72,7 @@ const addInputMeetingName = () => {
   parent.appendChild(node);
 };
 
+// Event listeners for JOIN and END meeting buttons
 checkStartEndMeeting = () => {
   const eventTypes = ["mousedown", "touchstart"];
   eventTypes.forEach((event) => {

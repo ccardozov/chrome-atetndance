@@ -4,7 +4,6 @@ button.addEventListener("click", () => {
     const nameInput = document.getElementById("input-meeting-name").value || "";
     chrome.tabs.executeScript(tabs[0].id, {
       code: `
-            ;
             if(document.getElementById("meeting-name-id")) {
                 document.getElementById("meeting-name-id").value = "${nameInput}";
             }
@@ -13,7 +12,7 @@ button.addEventListener("click", () => {
     chrome.runtime.sendMessage({
       action: "CHANGE_MEETING_NAME",
       data: nameInput,
-    }, () => chrome.pageAction.hide(tabs[0].id));
+    });
     window.close();
   });
 });

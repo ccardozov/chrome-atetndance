@@ -8,10 +8,10 @@
     "persistent": false
   },
   "content_scripts": [
-      {
-          "matches": ["*://meet.google.com/*-*-*"],
-          "js": ["js/attendanceIO.js"]
-      }
+    {
+      "matches": ["*://meet.google.com/*-*-*"],
+      "js": ["js/attendanceIO.js"]
+    }
   ],
   "page_action": {
     "default_popup": "html/popup.html",

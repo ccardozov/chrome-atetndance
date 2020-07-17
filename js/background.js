@@ -62,8 +62,6 @@ function addAttendanceRecord(type, person) {
 
 
 
-
-
 // ************ LISTENERS *******************
 chrome.runtime.onInstalled.addListener(function (details) {
   var rules = [
@@ -83,7 +81,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
   });
 });
 
-///Check for messages sent from content scripts
+/// Check for messages sent from content scripts
 chrome.runtime.onMessage.addListener(function (message) {
   switch (message.action) {
     case actions.START_MEETING:
