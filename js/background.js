@@ -2,9 +2,9 @@ const actions = {
   START_MEETING: "START_MEETING",
   END_MEETING: "END_MEETING",
   PERSON_ENTERED: "PERSON_ENTERED",
-  PERSON_LEFT: "PERSON_LEFT"
+  PERSON_LEFT: "PERSON_LEFT",
+  CHANGE_MEETING_NAME: "CHANGE_MEETING_NAME",
 };
-
 
 // *************** HELPER FUNCTIONS **************************
 function downloadAttendance(text, filename = "attendance") {
@@ -58,7 +58,8 @@ function addAttendanceRecord(type, person) {
     Object.assign(result.meeting.attendance, newAttendance);
     chrome.storage.local.set({ meeting: result.meeting });
   });
-};
+}
+
 
 
 
@@ -83,15 +84,13 @@ chrome.runtime.onInstalled.addListener(function (details) {
 });
 
 ///Check for messages sent from content scripts
-const START_MEETING = "START_MEETING";
-const END_MEETING = "END_MEETING";
 chrome.runtime.onMessage.addListener(function (message) {
   switch (message.action) {
     case actions.START_MEETING:
       chrome.storage.local.clear();
       chrome.storage.local.set({
         meeting: {
-          name: message.data,
+          name: message.data || "MyMeeting",
           time: new Date().toLocaleString(),
           attendance: {},
         },
@@ -106,6 +105,11 @@ chrome.runtime.onMessage.addListener(function (message) {
     case actions.PERSON_LEFT:
       addAttendanceRecord("out", message.data);
       break;
+    case actions.CHANGE_MEETING_NAME:
+      chrome.storage.local.get("meeting", (result) => {
+        Object.assign(result.meeting, { name: message.data });
+        chrome.storage.local.set({ meeting: result.meeting });
+      });
     default:
       break;
   }

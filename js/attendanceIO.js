@@ -9,6 +9,7 @@ const actions = {
   END_MEETING: "END_MEETING",
   PERSON_ENTERED: "PERSON_ENTERED",
   PERSON_LEFT: "PERSON_LEFT",
+  CHANGE_MEETING_NAME: "CHANGE_MEETING_NAME"
 };
 
 // Callback function to execute when mutations are observed
@@ -62,6 +63,12 @@ const addInputMeetingName = () => {
     font-size:1.75rem;
     font-family:'Google Sans',Roboto,Arial,sans-serif;
   `;
+  node.addEventListener("blur", (e) => {
+    chrome.runtime.sendMessage({
+      action: actions.CHANGE_MEETING_NAME,
+      data: e.target.value || "",
+    });
+  });
   parent.appendChild(node);
 };
 
@@ -72,7 +79,7 @@ checkStartEndMeeting = () => {
       switch (e.target.className) {
         case START_MEETING_CLASSNAME:
         case START_WRAPPER_CLASSNAME:
-          if (e.target.innerText === "Start a meeting") {
+          if (e.target.innerText === "Join now") {
             const meetingName = document.getElementById("meeting-name-id")
               .value;
             chrome.runtime.sendMessage({
