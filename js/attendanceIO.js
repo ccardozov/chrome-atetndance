@@ -9,7 +9,8 @@ const actions = {
   END_MEETING: "END_MEETING",
   PERSON_ENTERED: "PERSON_ENTERED",
   PERSON_LEFT: "PERSON_LEFT",
-  CHANGE_MEETING_NAME: "CHANGE_MEETING_NAME"
+  CHANGE_MEETING_NAME: "CHANGE_MEETING_NAME",
+  SAVE_TAB_ID: "SAVE_TAB_ID",
 };
 
 // Callback function to execute when mutations are observed
@@ -103,8 +104,13 @@ checkStartEndMeeting = () => {
   });
 };
 
+saveTabId = () => {
+  chrome.runtime.sendMessage({ action: actions.SAVE_TAB_ID });
+};
+
 // All js that need the page loaded first.
 window.addEventListener("load", () => {
   addInputMeetingName();
   checkStartEndMeeting();
+  saveTabId();
 });
