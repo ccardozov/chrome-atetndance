@@ -49,9 +49,9 @@ function processResult(result) {
     let numExits = 0;
 
     if (ins.length > outs.length) {
-      if (outs.length === 0) outs.push(eTime.toUTCString()); //Add as out the meeting end time
+      outs.push(eTime.toUTCString()); //Add as out the meeting end time
     } else if (ins.length < outs.length) {
-      if (ins.length === 0) ins.push(sTime.toUTCString()); //Add in since the person was already in
+      ins.unsift(sTime.toUTCString()); //Add in since the person was already in
     }
 
     const len = Math.min(ins.length, outs.length);
