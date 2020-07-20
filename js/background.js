@@ -7,7 +7,10 @@ const actions = {
   SAVE_TAB_ID: "SAVE_TAB_ID",
 };
 
+// ***********************************************************
 // *************** HELPER FUNCTIONS **************************
+// ***********************************************************
+
 function downloadAttendance(text, filename = "attendance") {
   var element = document.createElement("a");
   element.setAttribute(
@@ -30,7 +33,7 @@ function processResult(result) {
   const eTime = new Date(meeting.endTimestamp);
   let csv = `${meeting.name};\n`;
   csv += `Start Time:${sTime.toLocaleString()};`;
-  csv += `End Time:${sTime.toLocaleString()};\n`;
+  csv += `End Time:${eTime.toLocaleString()};\n`;
   csv += "Name;Surname;Total Time;Max Time;";
   csv += "First Entry;Last Exit;N° Entries;N° Exists;\n";
 
@@ -41,25 +44,32 @@ function processResult(result) {
     const lastName = `${person.split(" ")[1] || ""}`;
     const ins = attendance.in || [];
     const outs = attendance.out || [];
-    const len = Math.min(ins.length, outs.length);
     let maxTime = Number.NEGATIVE_INFINITY;
-    const firstEntry = new Date(ins[0]).toLocaleTimeString();
-    const lastExit = new Date(outs[outs.length - 1]).toLocaleTimeString();
     let totalTime = 0;
     let numExits = 0;
 
-    for (let i = 0; i < len; i++) {
+    if (ins.length > outs.length) {
+      if (outs.length === 0) outs.push(eTime.toUTCString()); //Add as out the meeting end time
+    } else if (ins.length < outs.length) {
+      if (ins.length === 0) ins.push(sTime.toUTCString()); //Add in since the person was already in
+    }
+
+    const len = Math.min(ins.length, outs.length);
+    const firstEntry = new Date(ins[0]).toLocaleTimeString();
+    const lastExit = new Date(outs[outs.length - 1]).toLocaleTimeString();
+    let i = 0; // Ins index
+    let j = 0; // Outs index
+    for (let i = 0, j = 0; i < ins.length, j < outs.length; i++, j++) {
       let inTimestamp = new Date(ins[i]);
       let outTimestamp = new Date(outs[i]);
       if (inTimestamp > outTimestamp) {
-        outs.splice(i, 1);
-        outTimestamp = outs[i] ? new Date(outs[i]) : new Date();
+        inTimestamp = sTime;
+        i--;
       }
       const timeOnline = (outTimestamp - inTimestamp) / 1000;
       maxTime = Math.max(timeOnline, maxTime);
       totalTime += timeOnline;
     }
-
     csv += `${firstName};${lastName};`;
     csv += `${totalTime};${maxTime};`;
     csv += `${firstEntry};${lastExit};`;
@@ -78,7 +88,7 @@ function generateCsvFileAndDownload() {
 function addAttendanceRecord(type, person) {
   chrome.storage.local.get(["meeting"], (result) => {
     let newAttendance = result.meeting.attendance;
-    const timestamp = new Date().toGMTString();
+    const timestamp = new Date().toUTCString();
     if (newAttendance.hasOwnProperty(person)) {
       if (newAttendance[person].hasOwnProperty(type)) {
         newAttendance[person][type].push(timestamp);
@@ -94,7 +104,10 @@ function addAttendanceRecord(type, person) {
   });
 }
 
+// ******************************************
 // ************ LISTENERS *******************
+// ******************************************
+
 chrome.runtime.onInstalled.addListener(function (details) {
   var rules = [
     {
@@ -131,9 +144,11 @@ chrome.runtime.onMessage.addListener(function (message, sender) {
         Object.assign(result.meeting, {
           endTimestamp: new Date().toUTCString(),
         });
-        chrome.storage.local.set({ meeting: result.meeting });
+        chrome.storage.local.set({ meeting: result.meeting }, () => {
+          generateCsvFileAndDownload();
+          chrome.storage.sync.clear();
+        });
       });
-      generateCsvFileAndDownload();
       break;
     case actions.PERSON_ENTERED:
       addAttendanceRecord("in", message.data);
@@ -159,7 +174,7 @@ chrome.runtime.onMessage.addListener(function (message, sender) {
 chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
   chrome.storage.sync.get("tabId", (result) => {
     const confirmMessage = "Do you want to save the meeting attendance?";
-    if (tabId === result.tabId && confirm(confirmMessage)) {
+    if (result && tabId === result.tabId && confirm(confirmMessage)) {
       chrome.storage.local.get("meeting", (result) => {
         Object.assign(result.meeting, {
           endTimestamp: new Date().toUTCString(),

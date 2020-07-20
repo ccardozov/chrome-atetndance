@@ -100,7 +100,7 @@ checkStartEndMeeting = () => {
         default:
           break;
       }
-    });
+    },false);
   });
 };
 
