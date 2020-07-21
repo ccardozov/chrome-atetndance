@@ -170,19 +170,24 @@ chrome.runtime.onMessage.addListener(function (message, sender) {
   }
 });
 
-// As to save attendance on tab close
+/**
+ * Function to listen to tab close and
+ * ask to save attendance
+ */
 chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
   chrome.storage.sync.get("tabId", (result) => {
-    const confirmMessage = "Do you want to save the meeting attendance?";
-    if (result && tabId === result.tabId && confirm(confirmMessage)) {
-      chrome.storage.local.get("meeting", (result) => {
-        Object.assign(result.meeting, {
-          endTimestamp: new Date().toUTCString(),
+    if (result && tabId === result.tabId) {
+      const confirmMessage = "Do you want to save the meeting attendance?";
+      if (confirm(confirmMessage)) {
+        chrome.storage.local.get("meeting", (result) => {
+          Object.assign(result.meeting, {
+            endTimestamp: new Date().toUTCString(),
+          });
+          chrome.storage.local.set({ meeting: result.meeting }, () => {
+            generateCsvFileAndDownload();
+          });
         });
-        chrome.storage.local.set({ meeting: result.meeting }, () => {
-          generateCsvFileAndDownload();
-        });
-      });
+      }
     }
   });
 });
