@@ -1,3 +1,5 @@
+// MESSAGE ACTION TYPES
+// (KEEP UPDATED WITH OTHER JS)
 const actions = {
   START_MEETING: "START_MEETING",
   END_MEETING: "END_MEETING",
@@ -11,6 +13,11 @@ const actions = {
 // *************** HELPER FUNCTIONS **************************
 // ***********************************************************
 
+/**
+ * Downloads as <filename>.csv file the <text>
+ * @param {string} text file contents
+ * @param {string} filename name of the file
+ */
 function downloadAttendance(text, filename = "attendance") {
   var element = document.createElement("a");
   element.setAttribute(
@@ -27,6 +34,13 @@ function downloadAttendance(text, filename = "attendance") {
   document.body.removeChild(element);
 }
 
+/**
+ * Process results from the meeting contained in results
+ * @param {object} result of all meeting attendance
+ * @return {array} <csv> which is the contents of the csv
+ *                 generated file
+ *                 <MeetingName> which is the name of the file.
+ */
 function processResult(result) {
   const meeting = result.meeting;
   const sTime = new Date(meeting.startTimestamp);
@@ -78,6 +92,10 @@ function processResult(result) {
   return [csv, meeting.name];
 }
 
+/**
+ * Gets the "meeting" object to process and download once
+ * the meeting is finished.
+ */
 function generateCsvFileAndDownload() {
   chrome.storage.local.get("meeting", function (result) {
     const [csv, meetingName] = processResult(result);
@@ -85,6 +103,12 @@ function generateCsvFileAndDownload() {
   });
 }
 
+/**
+ * Create an attendance record in the "meeting" object
+ * stored in the storage.local.
+ * @param {string} type of record "in" or "out"
+ * @param {string} person that entered/left the meeting room
+ */
 function addAttendanceRecord(type, person) {
   chrome.storage.local.get(["meeting"], (result) => {
     let newAttendance = result.meeting.attendance;
@@ -126,7 +150,9 @@ chrome.runtime.onInstalled.addListener(function (details) {
   });
 });
 
-/// Check for messages sent from content scripts
+/**
+ * Check for messages sent from content scripts
+ */
 chrome.runtime.onMessage.addListener(function (message, sender) {
   switch (message.action) {
     case actions.START_MEETING:
