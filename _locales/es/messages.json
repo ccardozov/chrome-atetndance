@@ -1,0 +1,62 @@
+{
+  "extName": {
+    "message": "Asistencia",
+    "description": "Nombre de la extensión."
+  },
+  "extDesc": {
+    "message": "Lista de asistencia para google meet",
+    "description": "Descripción de la extensión."
+  },
+  "defaultMeetName": {
+    "message": "Mi Reunión",
+    "description": "Nombre por defecto de la reunión para el placeholder."
+  },
+  "placeholderMeetName": {
+    "message": "Nombre de la Reunión",
+    "description": "Placeholder para el nombre de la reunión."
+  },
+  "btnChangeName": {
+    "message": "Cambiar nombre",
+    "description": "Boton para aceptar cambiar nombre de la reunión."
+  },
+  "changeMeetName": {
+    "message": "Cambiar nombre de la reunión",
+    "description": "Titulo de sección cambiar nombre de reunión."
+  },
+  "strJoinNow": {
+    "message": "Unirse ahora",
+    "description": "Join now string to check start meeting button."
+  },
+  "strPresent": {
+    "message": "Presentar",
+    "description": "Present string to check present meeting button."
+  },
+  "strLeaveCall": {
+    "message": "Abandonar la llamada",
+    "description": "Leave call string to check hang up button."
+  },
+  "strJoined": {
+    "message": " se unió",
+    "description": "String to check if someone has joined the meeting."
+  },
+  "strLeftMeeting": {
+    "message": " abandonó la reunión",
+    "description": "String for checking if someone has left the meeting."
+  },
+  "confirmSaveMessage": {
+    "message": "Desea guardar la lista de asistencia?",
+    "description": "Confirm message alert text."
+  },
+  "strStartTime": {
+    "message": "Hora Inicio",
+    "description": "String start time for csv sheet."
+  },
+  "strEndTime": {
+    "message": "Hora Fin",
+    "description": "String end time for csv sheet."
+  },
+  "strHeaders": {
+    "message": "Nombre;Apellido;Tiempo Total;Tiempo Máximo;Primera Entrada;Última Salida;N° Entradas;N° Salidas;\n",
+    "description": "String headers for csv sheet."
+  }
+}

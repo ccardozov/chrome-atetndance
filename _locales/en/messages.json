@@ -1,0 +1,62 @@
+{
+  "extName": {
+    "message": "Meet Attendance",
+    "description": "Extension name"
+  },
+  "extDesc": {
+    "message": "Google Meet Atendance Checker",
+    "description": "Extension description"
+  },
+  "defaultMeetName": {
+    "message": "My Meeting",
+    "description": "Meeting default name for input placeholder"
+  },
+  "placeholderMeetName": {
+    "message": "Meeting Name",
+    "description": "Placeholder for meeting name input"
+  },
+  "btnChangeName": {
+    "message": "Change name",
+    "description": "Change name button."
+  },
+  "changeMeetName": {
+    "message": "Change Meeting Name",
+    "description": "Change meeting name section title."
+  },
+  "strJoinNow": {
+    "message": "Join now",
+    "description": "Join now string to check start meeting button."
+  },
+  "strPresent": {
+    "message": "Present",
+    "description": "Present string to check present meeting button."
+  },
+  "strLeaveCall": {
+    "message": "Leave call",
+    "description": "Leave call string to check hang up button."
+  },
+  "strJoined": {
+    "message": " joined",
+    "description": "String to check if someone has joined the meeting."
+  },
+  "strLeftMeeting": {
+    "message": " has left the meeting",
+    "description": "String for checking if someone has left the meeting."
+  },
+  "confirmSaveMessage": {
+    "message": "Do you want to save the meeting attendance?",
+    "description": "Confirm message alert text."
+  },
+  "strStartTime": {
+    "message": "Start Time",
+    "description": "String start time for csv sheet."
+  },
+  "strEndTime": {
+    "message": "End Time",
+    "description": "String end time for csv sheet."
+  },
+  "strHeaders": {
+    "message": "Name;Surname;Total Time;Max Time;First Entry;Last Exit;N° Entries;N° Exits;\n",
+    "description": "String headers for csv sheet."
+  }
+}

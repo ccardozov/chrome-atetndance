@@ -4,6 +4,14 @@ const END_MEETING_CLASSNAME = "I5fjHe wb61gb";
 const START_WRAPPER_CLASSNAME = "l4V7wb Fxmcue";
 const START_MEETING_CLASSNAME = "NPEfkd RveJvd snByac";
 
+const startMeetButtonTexts = [
+  chrome.i18n.getMessage("strJoinNow"),
+  chrome.i18n.getMessage("strPresent"),
+];
+const strLeaveCall = chrome.i18n.getMessage("strLeaveCall");
+const strJoined = chrome.i18n.getMessage("strJoined");
+const strLeftMeeting = chrome.i18n.getMessage("strLeftMeeting");
+
 // MESSAGE ACTION TYPES
 // (KEEP UPDATED WITH OTHER JS FILES THAT NEEDS THEM)
 const actions = {
@@ -26,16 +34,16 @@ const callback = (mutationsList, observer) => {
       const addedNodes = mutation.addedNodes;
       if (addedNodes.length && addedNodes[0].innerText !== undefined) {
         let innerText = addedNodes[0].innerText;
-        if (innerText.includes(" joined")) {
+        if (innerText.includes(strJoined)) {
           // Someone has joined the conversation
-          innerText = innerText.replace(" joined", "");
+          innerText = innerText.replace(strJoined, "");
           chrome.runtime.sendMessage({
             action: actions.PERSON_ENTERED,
             data: innerText,
           });
-        } else if (innerText.includes(" has left the meeting")) {
+        } else if (innerText.includes(strLeftMeeting)) {
           // Someone has left the conversation
-          innerText = innerText.replace(" has left the meeting", "");
+          innerText = innerText.replace(strLeftMeeting, "");
           chrome.runtime.sendMessage({
             action: actions.PERSON_LEFT,
             data: innerText,
@@ -64,7 +72,7 @@ observer.observe(targetNode, config);
 const addInputMeetingName = () => {
   let parent = document.querySelector(INPUT_NAME_PARENT_NODE);
   let node = document.createElement("INPUT");
-  node.placeholder = "Meeting Name";
+  node.placeholder = chrome.i18n.getMessage("placeholderMeetName");
   node.type = "text";
   node.id = "meeting-name-id";
   node.style = `
@@ -93,7 +101,7 @@ checkStartEndMeeting = () => {
         switch (e.target.className) {
           case START_MEETING_CLASSNAME:
           case START_WRAPPER_CLASSNAME:
-            if (e.target.innerText in ["Join now", "Present"]) {
+            if (e.target.innerText in startMeetButtonTexts) {
               const meetingName = document.getElementById("meeting-name-id")
                 .value;
               chrome.runtime.sendMessage({
@@ -105,7 +113,8 @@ checkStartEndMeeting = () => {
             break;
           case END_MEETING_CLASSNAME:
             if (
-              e.target.parentElement.getAttribute("aria-label") === "Leave call"
+              e.target.parentElement.getAttribute("aria-label") ===
+              strLeaveCall
             ) {
               chrome.runtime.sendMessage({ action: actions.END_MEETING });
             }

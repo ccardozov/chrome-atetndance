@@ -1,7 +1,8 @@
 {
-  "name": "Meet Attendance",
+  "name": "__MSG_extName__",
   "version": "1.0",
-  "description": "Google Meet Atendance Checker",
+  "default_locale":"en",
+  "description": "__MSG_extDesc__",
   "permissions": ["activeTab", "storage", "declarativeContent"],
   "background": {
     "scripts": ["js/background.js"],

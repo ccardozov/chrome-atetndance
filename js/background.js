@@ -9,6 +9,12 @@ const actions = {
   SAVE_TAB_ID: "SAVE_TAB_ID",
 };
 
+//I18N constants
+
+const strStartTime = chrome.i18n.getMessage("strStartTime");
+const strEndTime = chrome.i18n.getMessage("strEndTime");
+const strHeaders = chrome.i18n.getMessage("strHeaders");
+
 // ***********************************************************
 // *************** HELPER FUNCTIONS **************************
 // ***********************************************************
@@ -46,11 +52,10 @@ function processResult(result) {
   const sTime = new Date(meeting.startTimestamp);
   const eTime = new Date(meeting.endTimestamp);
   let csv = `${meeting.name};\n`;
-  csv += `Start Time:${sTime.toLocaleString()};`;
-  csv += `End Time:${eTime.toLocaleString()};\n`;
-  csv += "Name;Surname;Total Time;Max Time;";
-  csv += "First Entry;Last Exit;N° Entries;N° Exists;\n";
-
+  csv += `${strStartTime}:${sTime.toLocaleString()};`;
+  csv += `${strEndTime}:${eTime.toLocaleString()};\n`;
+  csv += strHeaders;
+  
   for (const [person, attendance] of Object.entries(
     meeting.attendance
   ).sort()) {
@@ -159,7 +164,7 @@ chrome.runtime.onMessage.addListener(function (message, sender) {
       chrome.storage.local.clear();
       chrome.storage.local.set({
         meeting: {
-          name: message.data || "MyMeeting",
+          name: message.data || chrome.i18n.getMessage("defaultMeetName"),
           startTimestamp: new Date().toUTCString(),
           attendance: {},
         },
@@ -203,8 +208,7 @@ chrome.runtime.onMessage.addListener(function (message, sender) {
 chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
   chrome.storage.sync.get("tabId", (result) => {
     if (result && tabId === result.tabId) {
-      const confirmMessage = "Do you want to save the meeting attendance?";
-      if (confirm(confirmMessage)) {
+      if (confirm(chrome.i18n.getMessage("confirmSaveMessage"))) {
         chrome.storage.local.get("meeting", (result) => {
           Object.assign(result.meeting, {
             endTimestamp: new Date().toUTCString(),
