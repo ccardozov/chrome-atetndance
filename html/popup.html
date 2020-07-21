@@ -1,5 +1,26 @@
+<style>
+  input {
+    border: none;
+    border-bottom: 1px solid lightblue;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+
+  input:focus {
+    outline: none;
+  }
+  button#btn-change-name {
+    color: white;
+    background: #00796b;
+    border: none;
+    padding: 7px;
+    border-radius: 6px;
+    outline: none;
+    float: right;
+  }
+</style>
 <h3>Change Meeting Name</h3>
-<input type="text" id="input-meeting-name" />
+<input type="text" id="input-meeting-name" placeholder="Meeting name" />
 <br />
 <button id="btn-change-name">Change Name</button>
 <script src="/js/popup.js"></script>

@@ -19,7 +19,7 @@ const actions = {
  * Callback function to execute when mutations are observed
  * @param {MutationRecord} mutations
  * @param {MutationObserver} observer
-  */
+ */
 const callback = (mutationsList, observer) => {
   for (let mutation of mutationsList) {
     if (mutation.type === "childList") {
@@ -81,38 +81,41 @@ const addInputMeetingName = () => {
   parent.appendChild(node);
 };
 
-
 /**
  * Event listeners for JOIN and END meeting buttons
  * */
 checkStartEndMeeting = () => {
   const eventTypes = ["mousedown", "touchstart"];
   eventTypes.forEach((event) => {
-    document.body.addEventListener(`${event}`, (e) => {
-      switch (e.target.className) {
-        case START_MEETING_CLASSNAME:
-        case START_WRAPPER_CLASSNAME:
-          if (e.target.innerText in ["Join now", "Present"]) {
-            const meetingName = document.getElementById("meeting-name-id")
-              .value;
-            chrome.runtime.sendMessage({
-              action: actions.START_MEETING,
-              data: meetingName,
-            });
-            saveTabId();
-          }
-          break;
-        case END_MEETING_CLASSNAME:
-          if (
-            e.target.parentElement.getAttribute("aria-label") === "Leave call"
-          ) {
-            chrome.runtime.sendMessage({ action: actions.END_MEETING });
-          }
-          break;
-        default:
-          break;
-      }
-    },false);
+    document.body.addEventListener(
+      `${event}`,
+      (e) => {
+        switch (e.target.className) {
+          case START_MEETING_CLASSNAME:
+          case START_WRAPPER_CLASSNAME:
+            if (e.target.innerText in ["Join now", "Present"]) {
+              const meetingName = document.getElementById("meeting-name-id")
+                .value;
+              chrome.runtime.sendMessage({
+                action: actions.START_MEETING,
+                data: meetingName,
+              });
+              saveTabId();
+            }
+            break;
+          case END_MEETING_CLASSNAME:
+            if (
+              e.target.parentElement.getAttribute("aria-label") === "Leave call"
+            ) {
+              chrome.runtime.sendMessage({ action: actions.END_MEETING });
+            }
+            break;
+          default:
+            break;
+        }
+      },
+      false
+    );
   });
 };
 
